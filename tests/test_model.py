@@ -5,8 +5,8 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
-from ml.data import process_data
-from ml.model import compute_model_metrics, inference, train_model
+from mlmodel.ml.data import process_data
+from mlmodel.ml.model import compute_model_metrics, inference, train_model
 
 
 @pytest.fixture
