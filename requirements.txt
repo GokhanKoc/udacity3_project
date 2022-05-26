@@ -9,4 +9,5 @@ uvicorn
 gunicorn
 pytest
 flake8
-dvc[s3]
+#conda-forge
+dvc-s3
