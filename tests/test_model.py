@@ -16,9 +16,9 @@ def root():
 
 @pytest.fixture
 def files(root):
-    data = pd.read_csv("../data/census_cleaned.csv")
+    data = pd.read_csv("../data/census_clean.csv")
 
-    model = os.path.join(root, "../model/gbclassifier.pkl")
+    model = os.path.join(root, "../model/rf_model.pkl")
     with open(model, "rb") as f:
         model = pickle.load(f)
 
