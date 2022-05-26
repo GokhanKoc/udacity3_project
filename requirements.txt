@@ -10,4 +10,4 @@ gunicorn
 pytest
 flake8
 #conda-forge
-dvc-s3
+dvc[s3]
