@@ -42,7 +42,7 @@ pickle.dump(lb, open(lb_path, 'wb'))
 # Evaluation
 X_test, y_test, encoder, lb = process_data(
     test,
-    categorical_features=cat_features,
+    categorical_features=config.cat_features,
     label="salary",
     training=False,
     encoder=encoder,
