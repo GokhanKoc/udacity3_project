@@ -1,153 +1,111 @@
-import os
-import pickle
+"""Tests for the ML section."""
 
-import pandas as pd
+import os
+import pickle as pkl
+
 import pytest
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ml.data import process_data
-from ml.model import compute_model_metrics, inference, train_model
+from mlmodel.ml.data import process_data
+from mlmodel.ml.model import train_model, inference, compute_model_metrics, compute_metrics_by_slice
+import mlmodel.config as config
 
 
-@pytest.fixture
-def root():
-    return os.getcwd()
-
-
-@pytest.fixture
-def files(root):
-    data = pd.read_csv("../data/census_clean.csv")
-
-    model = os.path.join(root, "../model/rf_model.pkl")
-    with open(model, "rb") as f:
-        model = pickle.load(f)
-
-    encoder = os.path.join(root, "../model/encoder.pkl")
-    with open(encoder, "rb") as f:
-        encoder = pickle.load(f)
-
-    lb = os.path.join(root, "../model/lb.pkl")
-    with open(lb, "rb") as f:
-        lb = pickle.load(f)
-
-    return data, model, encoder, lb
-
-
-@pytest.fixture
-def train_test_data(files):
-    data, model, encoder, lb = files
-    train, test = train_test_split(data, test_size=0.20, random_state=42)
+@pytest.fixture()
+def input_df():
+    df = pd.read_csv(config.DATA_PATH)
+    train, test = train_test_split(df, test_size=config.TEST_SIZE)
     return train, test
 
 
-def test_train_model(files, root):
-    data, model, encoder, lb = files
-    train, test = train_test_split(data, test_size=0.20)
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
+def test_process_data(input_df):
+    train, test = input_df
+
     X_train, y_train, encoder, lb = process_data(
-        train, categorical_features=cat_features, label="salary", training=True
+        X=train, categorical_features=config.cat_features, label=config.TARGET, training=True
     )
-    filepath = os.path.join(root, "../model/gbclassifier_test.pkl")
-    model = train_model(X_train, y_train, filepath=filepath)
 
-    assert os.path.exists(filepath)
-    return X_train, y_train, model, encoder, lb
+    # Test the number of rows for training dataset
+    assert len(X_train) == len(y_train)
+
+    X_test, y_test, encoder_test, lb_test = process_data(
+        X=train, categorical_features=config.cat_features, label=config.TARGET, training=False, encoder=encoder, lb=lb
+    )
+
+    # Test the number of generated features for train and test datasets
+    assert X_train.shape[1] == X_test.shape[1]
 
 
-def test_compute_model_metrics(files, train_test_data):
-    _, model, encoder, lb = files
-    train, test = train_test_data
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
+def test_inference(input_df):
+    train, test = input_df
 
-    X_train, y_train, _, _ = process_data(
-        train,
-        categorical_features=cat_features,
-        label="salary",
-        training=True,
+    X_train, y_train, encoder, lb = process_data(
+        X=train, categorical_features=config.cat_features, label=config.TARGET, training=True
+    )
+
+    clf = train_model(X_train, y_train)
+
+    train_predictions = inference(clf, X_train)
+
+    # All predictions should be less than 1
+    assert all(train_predictions <= 1.0)
+
+    # All predictions should be positive
+    assert all(train_predictions >= 0)
+
+
+def test_compute_metrics(input_df):
+
+    train, test = input_df
+
+    X_train, y_train, encoder, lb = process_data(
+        X=train, categorical_features=config.cat_features, label=config.TARGET, training=True
+    )
+
+    clf = train_model(X_train, y_train)
+
+    train_predictions = inference(clf, X_train)
+
+    precision, recall, fbeta = compute_model_metrics(y_train, train_predictions)
+
+    # All metrics should not be higher then 1
+    assert precision <= 1.0
+    assert recall <= 1.0
+    assert fbeta <= 1.0
+
+    # Only for precision, it should be higher than 0.5
+    # the hazard limit for a binary classification
+    assert precision >= 0.5
+
+
+def test_compute_metrics_by_slice(input_df):
+
+    train, test = input_df
+
+    X_train, y_train, encoder, lb = process_data(
+        X=train, categorical_features=config.cat_features, label=config.TARGET, training=True
+    )
+
+    clf = train_model(X_train, y_train)
+
+    metrics_by_slice = compute_metrics_by_slice(
+        model=clf,
         encoder=encoder,
         lb=lb,
+        df=train,
+        target=config.TARGET,
+        cat_columns=config.cat_features,
+        output_path=None
     )
 
-    X_test, y_test, _, _ = process_data(
-        test,
-        categorical_features=cat_features,
-        label="salary",
-        training=False,
-        encoder=encoder,
-        lb=lb,
-    )
+    # Checking the type and columns of the output of the function compute_metrics_by_slice
+    assert isinstance(metrics_by_slice, pd.DataFrame)
+    assert metrics_by_slice.shape[1] == 5
+ 
+    # Checking the number of rows
+    nb_categories = 0
+    for col in config.cat_features:
+        nb_categories += train[col].nunique()
 
-    y_train_pred = inference(model, X_train)
-    y_test_pred = inference(model, X_test)
-
-    precision_train, recall_train, fbeta_train = compute_model_metrics(
-        y_train, y_train_pred
-    )
-    precision_test, recall_test, fbeta_test = compute_model_metrics(
-        y_test, y_test_pred
-    )
-
-    assert isinstance(precision_train, float)
-    assert isinstance(precision_test, float)
-    assert isinstance(recall_train, float)
-    assert isinstance(recall_test, float)
-    assert isinstance(fbeta_train, float)
-    assert isinstance(fbeta_test, float)
-
-
-def test_inference(train_test_data, files):
-    _, model, encoder, lb = files
-    train, test = train_test_data
-
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
-    X_train, y_train, _, _ = process_data(
-        train,
-        categorical_features=cat_features,
-        label="salary",
-        training=True,
-        encoder=encoder,
-        lb=lb,
-    )
-    X_test, y_test, _, _ = process_data(
-        test,
-        categorical_features=cat_features,
-        label="salary",
-        training=False,
-        encoder=encoder,
-        lb=lb,
-    )
-
-    y_train_pred = inference(model, X_train)
-    assert len(y_train_pred) == X_train.shape[0]
-    assert len(y_train_pred) > 0
-
-    y_test_pred = inference(model, X_test)
-    assert len(y_test_pred) == X_test.shape[0]
-    assert len(y_test_pred) > 0
+    assert len(metrics_by_slice) == nb_categories
