@@ -1,7 +1,7 @@
 TEST_SIZE = 0.2
 TARGET = "salary"
 MODEL_PATH = "model/classifier.pkl"
-DATA_PATH = "./data/census_clean.csv"
+DATA_PATH = "data/census_clean.csv"
 METRICS_PATH = "model/metrics_by_slice.csv"
 
 all_columns = [
