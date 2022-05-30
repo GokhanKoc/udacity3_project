@@ -4,8 +4,11 @@ from fastapi.testclient import TestClient
 
 # Import our app from main.py.
 import sys,os
-BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE = os.path.dirname(os.path.abspath(__file__))
+#BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE)
+
+
 
 from main import app
 
