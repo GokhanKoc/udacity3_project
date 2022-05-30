@@ -7,7 +7,7 @@ import sys,os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE)
 
-from main import app
+from .main import app
 
 
 # Instantiate the testing client with our app.

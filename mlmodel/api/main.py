@@ -6,7 +6,7 @@ import uvicorn
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 
-from data_model import BasicInputData
+from .data_model import BasicInputData
 
 
 import sys,os
