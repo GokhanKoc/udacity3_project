@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 TARGET = "salary"
-TEST_SIZE = "0.2"
+TEST_SIZE = 0.2
 
 __MAIN_DIR = Path(__file__).parent.parent.absolute()
 __DATA_FILE = 'census_clean.csv'
