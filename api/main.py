@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 
 from data_model import BasicInputData
+
 from mlmodel.ml.data import process_data
 from mlmodel.ml.model import inference
 import mlmodel.config as config
