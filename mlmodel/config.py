@@ -1,6 +1,17 @@
+import os
+from pathlib import Path
+
 TARGET = "salary"
-MODEL_PATH = "model/classifier.pkl"
-METRICS_PATH = "model/metrics_by_slice.csv"
+
+
+__MAIN_DIR = Path(__file__).parent.parent.absolute()
+__DATA_FILE = 'census_clean.csv'
+__MODEL_FILE = 'classifier.pkl'
+__METRICS_FILE = "metrics_by_slice.csv"
+
+DATA_PATH = os.path.join(__MAIN_DIR, 'data', __DATA_FILE)
+MODEL_PATH = os.path.join(__MAIN_DIR, 'model', __MODEL_FILE)
+METRICS_PATH = os.path.join(__MAIN_DIR, 'model', __METRICS_FILE)
 
 all_columns = [
     "age", "workclass", "fnlgt", "education", "education_num",

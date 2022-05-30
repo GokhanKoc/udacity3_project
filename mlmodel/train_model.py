@@ -12,7 +12,7 @@ from ml import model
 from ml.data import process_data
 
 # Add code to load in the data.
-data = pd.read_csv('../data/census_clean.csv')
+data = pd.read_csv(config.DATA_PATH)
 
 
 # Optional enhancement, use K-fold cross validation instead of a
@@ -31,7 +31,7 @@ X_test, y_test, _, _ = process_data(
 mod = model.train_model(X_train, y_train)
 
 # Dump the model as a pickle file
-with open('../model/classifier.pkl', "wb") as file:
+with open(config.MODEL_PATH, "wb") as file:
     pkl.dump([encoder, lb, mod], file)
 
 # Inference and evaluation
