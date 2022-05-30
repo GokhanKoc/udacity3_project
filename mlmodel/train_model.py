@@ -17,7 +17,7 @@ data = pd.read_csv(config.DATA_PATH)
 
 # Optional enhancement, use K-fold cross validation instead of a
 # train-test split.
-train, test = train_test_split(data, test_size=0.2)
+train, test = train_test_split(data, test_size=config.TEST_SIZE)
 X_train, y_train, encoder, lb = process_data(
     train, categorical_features=config.cat_features, label=config.TARGET, training=True
 )
