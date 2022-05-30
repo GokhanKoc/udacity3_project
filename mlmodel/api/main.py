@@ -1,6 +1,5 @@
 # Put the code for your API here.
-# Put the code for your API here.
-import os
+
 import pickle as pkl
 import pandas as pd
 import uvicorn
@@ -9,10 +8,15 @@ from fastapi import FastAPI
 
 from data_model import BasicInputData
 
-from mlmodel.ml.data import process_data
-from mlmodel.ml.model import inference
-import mlmodel.config as config
 
+import sys,os
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BASE)
+
+
+from ml.data import process_data
+from ml.model import inference
+import config as config
 
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
