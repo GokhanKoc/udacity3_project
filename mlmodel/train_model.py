@@ -50,5 +50,5 @@ model.compute_metrics_by_slice(
     lb=lb,
     cat_columns=config.cat_features,
     target=config.TARGET,
-    output_path="../model/metrics_by_slice.csv"
+    output_path=config.METRICS_PATH
 )
