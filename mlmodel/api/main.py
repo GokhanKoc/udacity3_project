@@ -44,7 +44,7 @@ async def welcome():
         example_message (Dict) : Example message response for home directory
         GET request.
     """
-    return {'message': 'Hello'}
+    return {'message': 'Welcome to the salary predictor!!'}
 
 @app.post("/predictions")
 async def prediction(input_data: BasicInputData):
@@ -81,5 +81,7 @@ async def prediction(input_data: BasicInputData):
     pred = inference(model, x_data)
 
     y = lb.inverse_transform(pred)[0]
+
+    print(y)
 
     return {"predicted salary": y}
