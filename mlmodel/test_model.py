@@ -14,7 +14,7 @@ import mlmodel.config as config
 
 @pytest.fixture()
 def input_df():
-    df = pd.read_csv('../data/census_clean.csv')
+    df = pd.read_csv(config.DATA_PATH)
     train, test = train_test_split(df, test_size=config.TEST_SIZE)
     return train, test
 
