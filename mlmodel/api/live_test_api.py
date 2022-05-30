@@ -5,8 +5,8 @@ Heroku.
 import os
 import requests
 
-URL = "https://udacity3_project.herokuapp.com"
-# URL = "http://127.0.0.1:8000"
+#URL = "https://udacity3_project.herokuapp.com"
+URL = "http://127.0.0.1:8000"
 
 
 response = requests.post(os.path.join(URL, "predictions"), json={

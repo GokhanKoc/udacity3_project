@@ -7,7 +7,7 @@ import sys,os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE)
 
-from .main import app
+from main import app
 
 
 # Instantiate the testing client with our app.
@@ -85,7 +85,6 @@ def test_wrong_post(client):
         "workclass": "Unknown",
         "education": "HS-grad",
         "education_num": 9,
-        "marital_status": "Married-civ-spouse",
         "occupation": "Machine-op-inspct",
         "relationship": "Husband",
         "race": "White",

@@ -6,14 +6,13 @@ import uvicorn
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 
-from data_model import BasicInputData
 
 
 import sys,os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE)
 
-
+from data_model import BasicInputData
 from ml.data import process_data
 from ml.model import inference
 import config as config
@@ -81,7 +80,5 @@ async def prediction(input_data: BasicInputData):
     pred = inference(model, x_data)
 
     y = lb.inverse_transform(pred)[0]
-
-    print(y)
 
     return {"predicted salary": y}
