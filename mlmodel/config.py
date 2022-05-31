@@ -7,7 +7,7 @@ TEST_SIZE = 0.2
 __MAIN_DIR = Path(__file__).parent.parent.absolute()
 __DATA_FILE = 'census_clean.csv'
 __MODEL_FILE = 'classifier.pkl'
-__METRICS_FILE = "metrics_by_slice.csv"
+__METRICS_FILE = "slice_output.txt"
 
 DATA_PATH = os.path.join(__MAIN_DIR, 'data', __DATA_FILE)
 MODEL_PATH = os.path.join(__MAIN_DIR, 'model', __MODEL_FILE)
